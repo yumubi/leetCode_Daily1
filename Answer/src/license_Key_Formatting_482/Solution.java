@@ -54,6 +54,52 @@ public class Solution {
     }
 
 
+    /**
+     * 从后往前处理，避免对首个分区的分情况讨论和取余操作。
+     * @param s
+     * @param k
+     * @return
+     */
+    public String licenseKeyFormatting2(String s, int k) {
+        StringBuilder sb = new StringBuilder();
+        for(int i = s.length() - 1, cnt = 0; i >= 0; i--) {
+            if(s.charAt(i) == '-') continue;
+            if(cnt == k && (cnt = 0) >= 0) sb.append("-");
+            sb.append(s.charAt(i));
+            cnt++;
+        }
+        return sb.reverse().toString().toUpperCase();
+    }
+
+    public String licenseKeyFormatting3(String s, int k) {
+        char[] array = s.toCharArray();
+        int count = 0;
+        for(int i = 0; i < array.length; i++) {
+            if(array[i] != '-') {
+                if(array[i] > 'Z') array[i] -= 32;
+            }
+            count++;
+        }
+        if(count == 0) return "";
+        //计算分隔符的个数
+        int separator  = count / k;
+        //如果正好整除，分隔符个数 - 1
+        separator = count % k == 0 ? separator - 1 : separator;
+        // 存储结果的分组
+        char[] result = new char[count + separator];
+        int index = result.length - 1;
+        int letter = 0;
+        for(int i = s.length() - 1; i >= 0; i--) {
+            if(array[i] != '-') {
+                if(letter != 0 && letter % k == 0)  result[index--] = '-';
+                result[index--] = array[i];
+                letter++;
+            }
+        }
+        return new String(result);
+    }
+
+
 
     @Test
     public void test() {

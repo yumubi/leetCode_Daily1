@@ -64,5 +64,61 @@ public class TreeNode {
             }
 
 
+        /**
+         * 一次遍历
+         * @param root
+         * @param p
+         * @param q
+         * @return
+         */
+            public TreeNode lowestCommonAncestor2(TreeNode root, TreeNode p, TreeNode q) {
+                TreeNode ancestor = root;
+                while(true) {
+                    if(p.val < ancestor.val && q.val < ancestor.val) ancestor = ancestor.left;
+                    else if(p.val > ancestor.val && q.val > ancestor.val) ancestor = ancestor.right;
+                    else break;
+                }
+                return ancestor;
+            }
+
+
+        /**
+         * 迭代
+         * @param root
+         * @param p
+         * @param q
+         * @return
+         */
+            public TreeNode lowestCommonAncestor3(TreeNode root, TreeNode p, TreeNode q) {
+                while (root != null) {
+                    if(root.val < p.val && root.val < q.val) root = root.right;
+                    else if(root.val > p.val && root.val > q.val) root = root.left;
+                    else break;
+                }
+                return root;
+            }
+
+            //优化：若可保证 p.val < q.valp.val<q.val ，则在循环中可减少判断条件。
+            public TreeNode lowestCommonAncestor4(TreeNode root, TreeNode p, TreeNode q) {
+                if(p.val > q.val) {
+                    TreeNode tmp = p;
+                    p = q;
+                    q = tmp;
+                }
+                while(root != null) {
+                    if(root.val < p.val) root = root.right;
+                    else if(root.val > q.val) root = root.left;
+                    else break;
+                }
+                return root;
+            }
+
+            public TreeNode lowestCommonAncestor5(TreeNode root, TreeNode p, TreeNode q) {
+                if(root.val < p.val && root.val < q.val) return lowestCommonAncestor5(root.right, p, q);
+                if(root.val > p.val && root.val > q.val) return lowestCommonAncestor5(root.left, p, q);
+                return root;
+            }
+
+
     }
 }
