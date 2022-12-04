@@ -32,10 +32,15 @@ public class Solution {
         return new int[]{area / w,  w};
     }
 
-
-//    public int[] constructRectangle2(int area) {
-//
-//    }
+    /**
+     * 根据题意，从 sqrt{area}开始往后模拟，遇到第一个能够被整除的数值，则返回该答案。
+     * @param area
+     * @return
+     */
+    public int[] constructRectangle2(int area) {
+        for(int i = (int)(Math.sqrt(area)); ; i--)
+            if(area % i == 0) return new int[]{area / i, i};
+    }
 
 
 
