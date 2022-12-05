@@ -94,7 +94,7 @@ public class Solution {
     }
 
 
-    public String[] findRelativeRanks(int[] nums) {
+    public String[] findRelativeRanks4(int[] nums) {
         int n = nums.length;
         int[] array = new int[n];
         System.arraycopy(nums, 0, array, 0, n);
@@ -117,6 +117,101 @@ public class Solution {
             }
         }
         return result;
+    }
+
+    /**
+     * 使用 TreeMap 来实现对成绩得到排序，key 存储成绩，value 存储成绩在数组中的下标。TreeMap 是按照升序进行排序的
+     * ，所以在遍历集合时，通过计算可以得出当前成绩的排名。
+     * @param nums
+     * @return
+     */
+    public String[] findRelativeRanks5(int[] nums) {
+        int n = nums.length;
+        String[] result = new String[n];
+        // key 为成绩，value 为成绩在数组中的下标，TreeMap 是按照升序进行排序的
+        Map<Integer, Integer> map = new TreeMap<>();
+        for(int i = 0; i < n; i++) map.put(nums[i], i);
+        int count = 0;
+        for(Map.Entry<Integer, Integer> set : map.entrySet()) {
+            int ranking = n - count++;
+            switch (ranking) {
+                case 1:
+                    result[set.getValue()] = "Golde Medal";
+                    break;
+                case 2:
+                    result[set.getValue()] = "Silver Medal";
+                    break;
+                case 3:
+                    result[set.getValue()] = "Bronze Medal";
+                    break;
+                default:
+                    result[set.getValue()] = String.valueOf(ranking);
+            }
+        }
+        return result;
+    }
+
+    /**
+     * todo
+     *计数排序
+     首先寻找数组中最大的值（成绩最高的），创建一个 int[] array = new int[max + 1]; 的数组用来实现计数排序。
+     array 数组的下标对应成绩，值为该成绩所在的原数组的下标。由于 array 数组的值默认为 0，所以在存储成绩的下标时，应对下标加 1，取时减 1 即可
+     * @param nums
+     * @return
+     */
+    public String[] findRelativeRanks6(int[] nums) {
+        int n  = nums.length;
+        String[] result = new String[n];
+        int max = 0;
+        // 找出找出最高的成绩
+        for(int num : nums) {
+            if(max < num) max = num;
+        }
+        // 下标为成绩，值为成绩在 nums 数组的下标
+        int[] array = new int[max + 1];
+        for(int i =0; i < n; i++) array[nums[i]] = i + 1;
+        // 记录当前成绩的排名
+        int count  = 1;
+        for(int i = array.length - 1; i >= 0; i--) {
+            if(array[i] != 0) {
+                // 根据排名进行赋值
+                switch (count) {
+                    case 1:
+                        result[array[i] - 1] = "Gold Medal";
+                        break;
+                    case 2:
+                        result[array[i] - 1] = "Silver Medal";
+                        break;
+                    case 3:
+                        result[array[i] - 1] = "Bronze Medal";
+                        break;
+                    default:
+                        result[array[i] - 1] = String.valueOf(count);
+                }
+                count++;
+            }
+        }
+            return result;
+    }
+
+
+    private static final Map<Integer, String> RANKING = new HashMap<>();
+    static {
+        RANKING.put(1, "Gold Medal");
+        RANKING.put(2, "Silver Medal");
+        RANKING.put(3, "Bronze Medal");
+    }
+
+    public String[] findRelativeRanks7(int[] score) {
+        PriorityQueue<int[]> heap = new PriorityQueue<>((a, b) -> b[1] - a[1]);;
+        for(int i = 0; i < score.length; i++) heap.offer(new int[]{i, score[i]});
+        String[] ans = new String[score.length];
+        int rank = 1;
+        while (!heap.isEmpty()) {
+            int[] element = heap.poll();
+            ans[element[0]] = RANKING.getOrDefault(rank, String.valueOf(rank++));
+        }
+        return ans;
     }
 
 
