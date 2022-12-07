@@ -43,13 +43,54 @@ public class Solution {
                 for(int p = start; p < i; p++) {
                     ret.append(s.charAt(start + i - 1 - p));
                 }
-                while (i < length && s.charAt(i) == 'i') {
+                while (i < length && s.charAt(i) == ' ') {
                     i++;
                     ret.append(' ');
                 }
             }
             return ret.toString();
         }
+
+
+        public String reverseWords2(String s) {
+        int length = s.length();
+        char[] chars = s.toCharArray();
+        int i = 0;
+        while (i < length){
+            int start = i;
+            while (i < length && chars[i] != ' ') i++;
+            int left = start, right = i - 1;
+            while (left < right) {
+                swap(chars, left, right);
+                left++;
+                right--;
+            }
+            while (i < length && chars[i] == ' ') i++;
+        }
+        return s;
+    }
+
+        void swap(char[] ch, int left, int right) {
+                char tmp = ch[left];
+                ch[left] = ch[right];
+                ch[right] = tmp;
+        }
+
+
+
+        public String reverseWords3(String s){
+            String[] str = s.split(" ");
+            StringBuffer ans = new StringBuffer();
+            for(int i = 0; i < str.length; i++) {
+                ans.append(" " + new StringBuffer(str[i]).reverse());
+            }
+            //输出会多一个空格，所以删除delete(0,1)即开始那个空格
+            ans.delete(0, 1);
+            return ans.toString();
+        }
+
+
+
 
 
 
