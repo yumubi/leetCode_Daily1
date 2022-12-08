@@ -30,7 +30,7 @@ public class TreeNode {
                }
                res.add(list);
            }
-
+ //return Collections.reverse(res);
            int left = 0, right = res.size() - 1;
            while (left < right){
                List<Integer> tmp = res.get(left);
@@ -43,7 +43,11 @@ public class TreeNode {
        }
 
 
-
+/*
+遍历完一层节点之后，将存储该层节点值的列表添加到结果列表的头部。
+为了降低在结果列表的头部添加一层节点值的列表的时间复杂度，结果列表可以使用链表的结构，
+在链表头部添加一层节点值的列表的时间复杂度是 O(1)。在 Java 中，由于我们需要返回的 List 是一个接口，这里可以使用链表
+ */
        public List<List<Integer>> levelOrderBottom1(TreeNode root) {
            List<List<Integer>> levelOrder = new LinkedList<List<Integer>>();
            if(root == null) return levelOrder;
@@ -62,6 +66,25 @@ public class TreeNode {
                levelOrder.add(0, level);
            }
            return levelOrder;
+       }
+
+
+
+       public List<List<Integer>> levelOrderBottom2(TreeNode root) {
+           if(root == null) return new ArrayList<List<Integer>>();
+
+           ArrayList<List<Integer>> res = new ArrayList<List<Integer>>();
+           dfs(root, res, 1);
+           Collections.reverse(res);
+           return res;
+       }
+
+       private void dfs(TreeNode root, ArrayList<List<Integer>> res, int index) {
+           if(root == null) return;
+           if(index > res.size()) res.add(new ArrayList<Integer>());
+           res.get(index - 1).add(root.val);
+           dfs(root.left, res, index + 1);
+           dfs(root.right, res, index + 1);
        }
 
 
