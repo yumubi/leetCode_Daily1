@@ -6,6 +6,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Solution {
+    /**
+     * ac
+     * @param head
+     * @return
+     */
     public TreeNode sortedListToBST(ListNode head) {
         if(head == null) return null;
         List<Integer> list = new ArrayList<>();
@@ -30,11 +35,23 @@ public class Solution {
 
 
     /**
+     * 分治
+     * 将给定的有序链表转换为二叉搜索树的第一步是确定根节点。由于我们需要构造出平衡的二叉树，
+     * 因此比较直观的想法是让根节点左子树中的节点个数与右子树中的节点个数尽可能接近。这样一来，左右子树的高度也会非常接近，可以达到高度差绝对值不超过 1 的题目要求
+     *
+     * 这里对于中位数的定义为：如果链表中的元素个数为奇数，那么唯一的中间值为中位数；如果元素个数为偶数，那么唯二的中间值都可以作为中位数，而不是常规定义中二者的平均值
+     *
+     * 具体地，设当前链表的左端点为 left，右端点 right，包含关系为「左闭右开」，
+     * 即 left 包含在链表中而 right 不包含在链表中。我们希望快速地找出链表的中位数节点 mid。
      *找出链表中位数节点的方法多种多样，其中较为简单的一种是「快慢指针法」。
      * 初始时，快指针 fast 和慢指针 slow 均指向链表的左端点 left。我们将快指针 fast 向右移动两次的同时，将慢指针 slow 向右移动一次，
-     * 直到快指针到达边界（即快指针到达右端点或快指针的下一个节点是右端点）。此时，慢指针对应的元素就是中位数。
-     *
+     * 直到快指针到达边界（即快指针到达右端点或快指针的下一个节点是右端点）。此时，慢指针对应的元素就是中位数
      * 在找出了中位数节点之后，我们将其作为当前根节点的元素，并递归地构造其左侧部分的链表对应的左子树，以及右侧部分的链表对应的右子树
+     *
+     * 时间复杂度：O(nlogn)，其中 n 是链表的长度。
+     * 设长度为 n 的链表构造二叉搜索树的时间为 T(n)，递推式为 T(n)=2⋅T(n/2)+O(n)，根据主定理，T(n)=O(nlogn)。
+     * 空间复杂度：O(logn)，这里只计算除了返回答案之外的空间。平衡二叉树的高度为 O(logn)，即为递归过程中栈的最大深度，也就是需要的空间。
+     *
      * @param head
      * @return
      */
@@ -91,16 +108,6 @@ public class Solution {
         }
         return ret;
     }
-
-
-
-
-
-
-
-
-
-
     public TreeNode buildTree2(int left, int right) {
         if(left > right) return null;
         int mid = (left + right + 1) / 2;
@@ -111,6 +118,79 @@ public class Solution {
         root.right = buildTree2(mid + 1, right);
         return root;
     }
+
+
+    public TreeNode sortedListToBST3(ListNode head) {
+        //边界条件判断
+        if(head == null) return null;
+        if(head.next == null) return new TreeNode(head.val);
+
+        //通过快慢指针找到链表的中间节点slow，pre为中间节点的前一个节点
+        ListNode slow = head, fast = head, pre = null;
+        while(fast != null && fast.next != null) {
+            pre = slow;
+            slow = slow.next;
+            fast = fast.next.next;
+        }
+        //链表断开为两部分，一部分为node左子节点，另一部分为node右子节点
+        pre.next = null;
+        pre.next = null;
+        TreeNode node = new TreeNode(slow.val);
+        node.left = sortedListToBST3(head);
+        node.right = sortedListToBST3(slow.next);
+        return node;
+    }
+
+    public TreeNode sortedListTOBST4(ListNode head) {
+        List<Integer> list = new ArrayList<>();
+        while(head != null) {
+            list.add(head.val);
+            head = head.next;
+        }
+        return sortedListToBSTHelper(list, 0, list.size() - 1);
+    }
+
+    TreeNode sortedListToBSTHelper(List<Integer> list, int left, int right) {
+        if(left > right) return null;
+        int mid = left + (right - left) / 2;
+        TreeNode root = new TreeNode(list.get(mid));
+        root.left = sortedListToBSTHelper(list, left, mid - 1);
+        root.right = sortedListToBSTHelper(list, mid + 1, right);
+        return root;
+    }
+
+
+
+
+    ListNode cur = null;
+
+    public TreeNode sortedListToBST5(ListNode head) {
+        cur = head;
+        int end = 0;
+        while(head != null) {
+            end++;
+            head = head.next;
+        }
+
+        return sortedArrayToBSTHelper5(0, end);
+    }
+    private TreeNode sortedArrayToBSTHelper5(int start, int end) {
+        if(start == end) return null;
+        int mid = (start + end) >>> 1;
+        //遍历左子树并将根节点返回
+        TreeNode left = sortedArrayToBSTHelper5(start, mid);
+        //遍历当前根节点并进行赋值
+        TreeNode root = new TreeNode(cur.val);
+        root.left = left;
+        cur = cur.next;//指针后移，进行下一次的赋值
+        TreeNode right = sortedArrayToBSTHelper5(mid + 1, end);
+        root.right = right;
+        return root;
+    }
+
+
+
+
 
 
 
