@@ -17,26 +17,51 @@ public class TreeNode {
 
 
         class BSTIterator {
-          List<Integer> list = new ArrayList<>();
-          public BSTIterator(TreeNode root) {
-              dfs(root);
-          }
+//          Queue<Integer> list = new LinkedList<>();
+//          public BSTIterator(TreeNode root) {
+//              dfs(root);
+//          }
+//
+//          public int next(){
+//             if(!list.isEmpty()) return list.poll();
+//             return Integer.MIN_VALUE;
+//          }
+//
+//          public boolean hasNext() {
+//                return !list.isEmpty();
+//          }
+//
+//
+//          void dfs(TreeNode root) {
+//              if(root == null) return;
+//              dfs(root.left);
+//              list.add(root.val);
+//              dfs(root.right);
+//          }
 
-          public int next(){
+//我们可以直接对二叉搜索树做一次完全的递归遍历，获取中序遍历的全部结果并保存在数组中。随后，我们利用得到的数组本身来实现迭代器。
+            private int idx;
+            private List<Integer> arr;
 
-          }
+            public BSTIterator(TreeNode root) {
+                idx = 0;
+                arr = new ArrayList<Integer>();
+                inorderTraversal(root, arr);
+            }
 
-          public boolean hasNext() {
+            public int next() {
+                return arr.get(idx++);
+            }
+            public boolean hasNext(){
+                return idx < arr.size();
+            }
 
-          }
-
-
-          void dfs(TreeNode root) {
-              if(root == null) return;
-              dfs(root.left);
-              list.add(root.val);
-              dfs(root.right);
-          }
+            private void inorderTraversal(TreeNode root, List<Integer> arr){
+                if(root == null) return;
+                inorderTraversal(root.left, arr);
+                arr.add(root.val);
+                inorderTraversal(root.right, arr);
+            }
 
 
 
