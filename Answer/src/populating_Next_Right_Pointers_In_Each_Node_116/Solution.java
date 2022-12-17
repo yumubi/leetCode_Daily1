@@ -33,7 +33,6 @@ public class Solution {
      * bfs
      * 时间复杂度：O(N)。每个节点会被访问一次且只会被访问一次，即从队列中弹出，并建立 next 指针。
      * 空间复杂度：O(N)。这是一棵完美二叉树，它的最后一个层级包含 N/2 个节点。广度优先遍历的复杂度取决于一个层级上的最大元素数量。这种情况下空间复杂度为 O(N)。
-     * 方法二：使用已建立的 next 指针
      * @param root
      * @return
      */
@@ -117,18 +116,111 @@ public class Solution {
 
     public Node connect3(Node root) {
         if(root == null) return root;
-
         Node pre = root;
         //循环条件是当前节点的left不为空，当只有根节点或者所有叶子节点都出串联完后循环就退出了
         while(pre.left != null) {
             Node tmp = pre;
             while(tmp != null) {
+                //将tmp的左右节点都串联起来
+                //外层循环已经判断了当前节点的left不为空
                 tmp.left.next = tmp.right;
+                //下一个不为空说明上一层已经帮我们完成串联了
+                if(tmp.next != null) tmp.right.next = tmp.next.left;
+                //继续右边遍历
+                tmp = tmp.next;
             }
+            //从下一层的最左边开始遍历
+            pre = pre.left;
         }
+        return root;
     }
 
 
+    /**
+     * 递归
+     * https://leetcode.cn/problems/populating-next-right-pointers-in-each-node/solution/dong-hua-yan-shi-san-chong-shi-xian-116-tian-chong/
+     * @param root
+     * @return
+     */
+    public Node connect4(Node root) {
+        dfs4(root);
+        return root;
+    }
+    void dfs4(Node root) {
+        if(root == null) return;
+        Node left = root.left;
+        Node right = root.right;
+        while(left != null) {
+            left.next = right;
+            left = left.right;
+            right = right.left;
+        }
+        //递归的调用左右节点，完成同样的纵深串联
+        dfs4(root.left);
+        dfs4(root.right);
+    }
+
+
+    public Node connect5(Node root) {
+        if(root == null) return root;
+        //cur我们把它看作是每一层的链表
+        Node cur = root;
+        while(cur != null) {
+            //遍历当前层的时候，为了方便操作在下一层前面添加一个哑节点（这里是访问当前层的节点，然后把下一层的节点穿起来）
+            Node dummy = new Node(0);
+            //pre表示下一层节点的前一个节点
+            Node pre = dummy;
+
+            //然后开始遍历当前层的链表,注意是完美二叉树，有左子节点就一定有右子节点
+            while(cur != null && cur.left != null) {
+                pre.next = cur.left;
+                pre = pre.next;
+
+                //pre节点的next指向当前接节点的右子节点
+                pre.next = cur.right;
+                pre = pre.next;
+                //继续访问这一行的下一个节点
+                cur = cur.next;
+            }
+            //把下一层串联成一个链表后，让他赋值给cur，后续继续循环，知道cur为空为止
+            cur = dummy.next;
+        }
+        return root;
+    }
+
+    public Node connect6(Node root) {
+        if(root == null) return null;
+        Node pre = root;
+        Node cur = null;
+        while(pre.left != null) {
+            //遍历当前这一层的节点，然后把他们的下一层连接起来
+            cur = pre;
+            //cur不为空，就表示这一层还没遍历完，就继续循环
+            while(cur != null) {
+                //让下一层的左子节点指向右子节点
+                cur.left.next = cur.right;
+                //如果cur.next不为空，就表示还没遍历到这一层
+                //最后的那个节点的右子节点，就让前一个节点的右子节点指向下一个节点的左子节点
+                if(cur.next != null) cur.right.next = cur.next.left;
+                //然后继续连接下一个节点的子节点
+                cur = cur.next;
+            }
+            //继续下一层
+            pre = pre.left;
+        }
+        return root;
+    }
+
+    public Node connect7(Node root) {
+        dfs7(root, null);
+        return root;
+    }
+    private void dfs7(Node curr, Node next) {
+        if(curr == null) return;
+        curr.next = next;
+        dfs7(curr.left, curr.right);
+        dfs7(curr.right, curr.next == null ? null : curr.next.left);
+    }
 
 
 

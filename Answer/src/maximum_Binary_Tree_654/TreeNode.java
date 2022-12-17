@@ -13,7 +13,7 @@ public class TreeNode {
        }
 
        class Solution {
-           public TreeNode constructMaximumBinartTree(int[] nums) {
+           public TreeNode constructMaximumBinaryTree(int[] nums) {
 
 
            }
