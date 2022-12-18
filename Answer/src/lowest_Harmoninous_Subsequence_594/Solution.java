@@ -1,4 +1,4 @@
-package longest_Harmoninous_Subsequence_594;
+package lowest_Harmoninous_Subsequence_594;
 
 import org.junit.Test;
 
