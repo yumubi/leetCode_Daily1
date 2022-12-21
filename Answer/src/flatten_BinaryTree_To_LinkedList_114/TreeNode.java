@@ -1,9 +1,6 @@
 package flatten_BinaryTree_To_LinkedList_114;
 
-import java.util.ArrayList;
-import java.util.Deque;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 public class TreeNode {
     int val;
@@ -223,17 +220,44 @@ public class TreeNode {
            }
 
            /**
-            *
+            *递归
             * @param root
             */
+           private TreeNode pre = null;
            public void flatten02(TreeNode root) {
+               if(root == null) return;
+               flatten02(root.right);
+               flatten02(root.left);
+               root.right = pre;
+               root.left = null;
+               pre = root;
 
 
-
-
-
-
-
+//
+//               // 定义：将以 root 为根的树拉平为链表
+//               void flatten(TreeNode root) {
+//                   // base case
+//                   if (root == null) return;
+//
+//                   flatten(root.left);
+//                   flatten(root.right);
+//
+//                   /**** 后序遍历位置 ****/
+//                   // 1、左右子树已经被拉平成一条链表
+//                   TreeNode left = root.left;
+//                   TreeNode right = root.right;
+//
+//                   // 2、将左子树作为右子树
+//                   root.left = null;
+//                   root.right = left;
+//
+//                   // 3、将原先的右子树接到当前右子树的末端
+//                   TreeNode p = root;
+//                   while (p.right != null) {
+//                       p = p.right;
+//                   }
+//                   p.right = right;
+//               }
 
 
 
@@ -246,9 +270,74 @@ public class TreeNode {
 
            }
 
+           /**
+            * 迭代写法
+            * @param root
+            */
+           public void flatten03(TreeNode root) {
+               Stack<TreeNode> toVisit = new Stack<>();
+               TreeNode cur = root;
+               TreeNode pre = null;
+
+               while(cur != null || !toVisit.isEmpty()) {
+                   while(cur != null) {
+                       toVisit.push(cur);//添加根节点
+                       cur = cur.right;//递归添加右节点
+                   }
+                   cur = toVisit.peek();//已经访问到最右的节点了
+                   //在不存在左节点或者右节点已经访问过的情况下，访问根节点
+                   if(cur.left == null || cur.left == pre) {
+                       toVisit.pop();
+                       /**修改的地方**/
+                       cur.right = pre;
+                       cur.left = null;
+                       /********/
+                       pre = cur;
+                       cur = null;
+                   } else {
+                       cur = cur.left;//左节点还没有访问过就先访问左节点
+                   }
+
+               }
+           }
+
+           /**
+            * 变形的后序遍历：右子树--左子树--根节点
+            */
+           private TreeNode pre04 = null;
+           public void flatten04(TreeNode root) {
+               dfs04(root);
+           }
+           public void dfs04(TreeNode root) {
+               if(root == null) return;
+               dfs04(root.right);
+               dfs04(root.left);
+               root.right = pre;//将当前节点右节点指向之前节点
+               root.left = null;//左节点置为空
+               pre = root;//pre节点指向当前节点
+           }
 
 
-
+           public void flatten05(TreeNode root) {
+               Stack<TreeNode> stack = new Stack<>();
+               TreeNode pre = null;
+               while(root != null || !stack.isEmpty()) {
+                   while(root != null) {
+                       stack.push(root);//注意！是root压栈，不是root.right
+                       root = root.right;
+                   }
+                   root = stack.peek();
+                   if(root.left == null || root.left == pre) {//若左节点不存在或者左节点已经访问过，则将当前节点的节点指向pre节点，左节点置为空
+                       root.right = pre;
+                       root.left = null;
+                       pre = root;
+                       stack.pop();
+                       root = null;//这个别忘了
+                   } else {
+                       root = root.left;//注意！左节点还没访问过，先访问左节点，到下一轮循环
+                   }
+               }
+           }
 
 
 
