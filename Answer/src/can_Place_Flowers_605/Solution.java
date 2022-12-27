@@ -81,4 +81,49 @@ public class Solution {
     }
 
 
+    /**
+     * 跳格子解法
+     * 采用“跳格子”的解法只需遍历不到一遍数组，处理以下两种不同的情况即可：
+     * 【1】当遍历到index遇到1时，说明这个位置有花，那必然从index+2的位置才有可能种花，因此当碰到1时直接跳过下一格。
+     * 【2】当遍历到index遇到0时，由于每次碰到1都是跳两格，因此前一格必定是0，此时只需要判断下一格是不是1即可得出index这一格能不能种花，
+     * 如果能种则令n减一，然后这个位置就按照遇到1时处理，即跳两格；如果index的后一格是1，说明这个位置不能种花且之后两格也不可能种花（参照【1】），直接跳过3格。
+     * 当n减为0时，说明可以种入n朵花，则可以直接退出遍历返回true；如果遍历结束n没有减到0，说明最多种入的花的数量小于n，则返回false。
+     * @param flowered
+     * @param n
+     * @return
+     */
+    public boolean canPlaceFlowers03(int[] flowered, int n) {
+        for(int i = 0, len = flowered.length; i < len && n > 0; ) {
+            if(flowered[i] == 1) {
+                i += 2;
+            } else if(i == flowered.length - 1 || flowered[i + 1] == 0) {
+                n--;
+            } else {
+                i += 3;
+            }
+        }
+        return n <= 0;
+    }
+
+
+    public boolean canPlaceFlowers04(int[] flowered, int n) {
+        int num = 0, count = 1;//假设再数组左边添加0，以解决边界问题，令count初始为1
+        for(int i = 0; i < flowered.length; i++) {
+            if(flowered[i] == 0) {
+                count++;
+            } else {
+                count = 0;
+            }
+            if(count == 3) {//每连续3个0种一次花
+                num++;
+                count = 1;
+            }
+        }
+        if(count == 2) {//如果最后count为2而不是1，表示最后一个位置可以种花
+            num++;
+        }
+        return n <= num;
+    }
+
+
 }

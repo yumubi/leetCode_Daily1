@@ -77,6 +77,13 @@ public class Solution {
     }
 
 
+    /**
+     * 朴素解法
+     * 为了方便，我们称每个单元格及其八连通方向单元格所组成的连通块为一个 item。
+     * 数据范围只有 200，我们可以直接对每个 item 进行遍历模拟。
+     * @param img
+     * @return
+     */
 
     public int[][] imageSmoother02(int[][] img) {
         int m = img.length, n = img[0].length;
@@ -96,6 +103,31 @@ public class Solution {
         }
         return ans;
     }
+
+    public int[][] imageSmoother03(int[][] img) {
+        int m = img.length, n = img[0].length;
+        int[][] sum = new int[m + 10][n + 10];
+        for(int i = 1; i <= m; i++) {
+            for(int j = 1; j <= n; j++) {
+                sum[i][j] = sum[i - 1][j] + sum[i][j - 1] - sum[i - 1][j - 1] + img[i - 1][j - 1];
+            }
+        }
+
+        int[][] ans = new int[m][n];
+        for(int i = 0; i < m; i++) {
+            for(int j = 0; j < n; j++) {
+                int a = Math.max(0, i - 1), b = Math.max(0, j - 1);
+                int c = Math.min(m - 1, i + 1), d = Math.min(n - 1, j + 1);
+                int cnt = (c - a + 1) * (d - b + 1);
+                int tot = sum[c + 1][d + 1] - sum[a][d + 1] - sum[c + 1][b] + sum[a][b];
+                ans[i][j] = tot / cnt;
+            }
+        }
+        return ans;
+    }
+
+
+
 
 
 
