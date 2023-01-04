@@ -147,4 +147,34 @@ public class Solution {
     }
 
 
+    /**
+     * 先将数字转为字符串再提取每一位的代码
+     * @param left
+     * @param right
+     * @return
+     */
+        private static List<Integer> selfDividingNumbers05(int left, int right) {
+            List<Integer> result = new ArrayList<>();
+            int flag = 0; //代表是自除数
+            for (int i = left; i <= right; i++){
+                String str = String.valueOf(i); //将i转为字符串
+                int len = str.length();
+                for (int j = 0; j < len; j++){
+                    int k = Integer.parseInt(String.valueOf(str.charAt(j)));
+                    if (k == 0 || (i % k != 0)){
+                        flag = 1;
+                        break;
+                    }
+                }
+                if (flag == 0){
+                    result.add(i);
+                }
+                flag = 0;
+            }
+            return result;
+        }
+
+
+
+
 }
